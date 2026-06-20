@@ -1,31 +1,20 @@
-name: AI Builders Digest
+name: build
 
 on:
+  push:
   workflow_dispatch:
-  schedule:
-    - cron: "0 8 * * *"
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # ❗关键修复：禁止 npm ci
-      - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+      - run: npm install
 
-      - name: Run script
-        run: node scripts/prepare-digest.js
+      - run: npm run build
