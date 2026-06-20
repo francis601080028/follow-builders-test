@@ -10,21 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 拉代码
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # Node 环境（锁定 LTS）
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
-      # 安装依赖（避免 npm ci 报错）
+      # ❗关键修复：禁止 npm ci
       - name: Install dependencies
-        run: npm install
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
-      # 运行主脚本
-      - name: Run digest script
+      - name: Run script
         run: node scripts/prepare-digest.js
